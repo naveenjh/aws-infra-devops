@@ -7,6 +7,12 @@ Parameters:
     Type: String
 #security group is for resources not for subnets, inbound outbound rules
 Resources:
+  Ec2InstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties: 
+      InstanceProfileName: njha-ec2-instance-profile      
+      Roles: 
+        - njha-ec2-role
 ## Load balancer Security Group to allow incoming http connection to port 80 and outgoing to port 8080 as loadbalancer will be connecting to 8080 on webserver tomcat
   LBSecGroup:
     Type: AWS::EC2::SecurityGroup
@@ -65,8 +71,12 @@ Resources:
           apt-get install unzip awscli -y
           apt-get install apache2 -y
           sudo systemctl start apache2.service
-      ImageId: ami-005bdb005fb00e791
-      KeyName: jumpbox-key
+          cd /var/www/html
+          aws s3 cp s3://njha-udacity-demo1/udacity.zip .
+          unzip -o udacity.zip
+      ImageId: ami-07ebfd5b3428b6f4d
+      KeyName: jump-box-east
+      IamInstanceProfile: njha-ec2-instance-profile
       SecurityGroups:
       - Ref: WebServerSecGroup
       InstanceType: t3.medium
@@ -138,6 +148,15 @@ Resources:
           Values: [/]
         ListenerArn: !Ref 'Listener'
         Priority: 1
+
+Outputs:
+
+  WebAppLB: 
+      Description: A reference to the APP's URL Link 
+      Value: !Join [ "", [ "http://", !GetAtt WebAppLB.DNSName]]
+      Export:
+        Name: "DNSName-Link"
+
   
       
   
