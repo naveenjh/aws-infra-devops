@@ -1,0 +1,9 @@
+1. Create 2 key pair (ppk) in aws console
+	a. for jumphost identity
+	b. for key that will be attached to any other ec2 instances when we launch in private subnet.
+2. while creating jump box ec2 instance, choose VPC and public subnet for jumphost and use existing key created in first step, Also in security group allow myIP Only to connect to this jumphost.
+
+3. while creating private subnet ec2 instance, choose VPC and private subnet and use existing key created in first step
+
+4. copy key b. on jumpbox host ine \home\ec2-user
+
